@@ -233,10 +233,10 @@ Output
 Added new context <cluster_name> to /Users/alex/.kube/config
 ```
 
-Confirm
+Confirm the active `kubectl` context in your .kube/config file is the new cluster created by `eksctl`:
 
 ```
- kubectl config get-contexts
+kubectl config get-contexts
 CURRENT   NAME                                                           CLUSTER                                       AUTHINFO                                                       NAMESPACE
           docker-desktop                                                 docker-desktop                                docker-desktop                                                 
 *         iam-root-account@unique-party-1719505990.us-east-1.eksctl.io   unique-party-1719505990.us-east-1.eksctl.io   iam-root-account@unique-party-1719505990.us-east-1.eksctl.io   
@@ -245,7 +245,21 @@ CURRENT   NAME                                                           CLUSTER
 
 ### 4. Verify
 
-You can now test the deployment so far with the `kubectl get svc` command to  list all the services (denoted by svc) that are currently defined within the active context of your .kube/config file.
+You can now verify the deployment. In this section we review the following cluster resources:
+
+* Kubernetes Services
+* Worker Nodes
+* Node Resources
+* VPC
+* Subnets
+* Security Groups
+* Internet Gateway
+* Kubernetes Control Plane
+* IAM Role
+
+#### Get Services
+
+The `kubectl get svc` lists all the services that are currently defined within the active context of your .kube/config file.
 
 ```
 kubectl get svc
@@ -260,7 +274,7 @@ kubernetes   ClusterIP   10.100.0.1   <none>        443/TCP   1m45s
 
 #### Get Nodes
 
-Nodes are the worker machines in Kubernetes, and they can be either physical machines or virtual machines. To list all the nodes in a Kubernetes cluster:
+To list all the nodes in the cluster:
 
 ```
 kubectl get nodes -o wide
@@ -275,11 +289,11 @@ ip-192-168-42-138.ec2.internal   Ready    <none>   84m   v1.29.3-eks-ae9a62a   1
 ```
 
 * Status `Ready` means they are ready to accept pods.
-* Role `<none>`, indicaties they are worker nodes.
+* Role `<none>`, indicates they are worker nodes.
 
 #### Node Resources
 
-To view the specifications, CPU, memory, and disk details for the worker nodes:
+To view the specs (CPU, Memory, and Storage) for the worker nodes:
 
 ```
 kubectl get nodes -o json | jq '.items[] | {name: .metadata.name, capacity: .status.capacity, allocatable: .status.allocatable}'
@@ -332,7 +346,7 @@ The output from the 2 commands above indicate that the worker nodes are Amazon L
 
 - CPUs: 2
 - Memory: 6.8 GB
-- Disk: 70.98 GB
+- Storage: 70.98 GB
 
 In the AWS Console go to:
 
@@ -364,7 +378,7 @@ VPC > Security > Security groups
 
 ![aws-vpc-security-groups.png](img%2Faws-vpc-security-groups.png)
 
-Security groups control inbound and outbound traffic to and from your EKS cluster and its resources. They act as virtual firewalls. For example, the Security Group highlighted above allows nodes to communicate with each other on all ports.  
+Security groups control inbound and outbound traffic to and from your EKS cluster and its resources. They act as virtual firewalls. For example, the Security group highlighted above allows nodes to communicate with each other on all ports.  
 
 ##### Internet Gateway
 
@@ -402,7 +416,7 @@ IAM > Roles > Search: "NodeInstance" > `select role`
 
 ![aws-iam-eks-node-instance-role.png](img%2Faws-iam-eks-node-instance-role.png)
 
-Adds the following Permissions policies:
+Has the following Permissions policies:
 
 | IAM Policy                          | Description                                                                                     |
 |-------------------------------------|-------------------------------------------------------------------------------------------------|
@@ -412,7 +426,7 @@ Adds the following Permissions policies:
 | AmazonSSMManagedInstanceCore        | Provides the necessary permissions for the AWS Systems Manager (SSM) to manage the instances    |
 
 
-This IAM Role is mapped into a Kubernetes ConfigMap. Note that the Role ARN is referenced by: 
+This IAM Role is mapped into a Kubernetes ConfigMap. Note that the Role ARN is referenced by a specific ConfigMap.  
 
 In the AWS Console go to:
 
@@ -420,7 +434,7 @@ EKS > Clusters > `select cluster` > Config and secrets > ConfigMaps > `aws-auth`
 
 ![aws-eks-k8s-configmap.png](img%2Faws-eks-k8s-configmap.png)
 
-The ConfigMap plays a crucial role in granting necessary permissions to the worker nodes (EC2 instances) within the cluster. This ConfigMap maps an AWS IAM role to Kubernetes RBAC (Role-Based Access Control), allowing the nodes to interact with the EKS control plane and other AWS services.
+The `aws-auth` ConfigMap plays a crucial role in granting necessary permissions to the worker nodes (EC2 instances) within the cluster. This ConfigMap maps an AWS IAM role to Kubernetes RBAC, allowing the nodes to interact with the EKS control plane and other AWS services, through the Permissions policies listed above. 
 
 ##### Summary
 
