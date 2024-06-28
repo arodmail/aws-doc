@@ -7,7 +7,7 @@ The most recent version of the open-source command-line tool written in Go by th
 eksctl create cluster
 ```
 
-The process takes around 15 minutes. The end result is cloud infrastructure in AWS that includes a VPC, Subnets, a Node Group of worker nodes (AmazonLinux EC2 instances), and the cloud resources necessary to run a managed Kubernetes _control plane_ in AWS.
+The process takes about 15 minutes. The end result is cloud infrastructure in AWS that includes a VPC, Subnets, a Node Group of Worker Nodes (AmazonLinux EC2 instances), and the cloud resources necessary to run a managed Kubernetes Control Plane in AWS.
 
 ![aws-eks-cloud-infrastructure.png](img%2Faws-eks-cloud-infrastructure.png)
 
@@ -178,7 +178,7 @@ aws sts get-caller-identity
 }
 ```
 
-The Security Token Service (STS) returns a verification JSON document with the user details.
+The AWS Security Token Service (STS) returns a verification JSON document with the user details.
 
 **Important**: Delete the temporary access key for the root user after completing the cluster deployment steps.
 
@@ -233,7 +233,7 @@ Output
 Added new context <cluster_name> to /Users/alex/.kube/config
 ```
 
-Confirm the active `kubectl` context in your .kube/config file is the new cluster created by `eksctl`:
+Confirm the active `kubectl` context in your `.kube/config` file is the new cluster created by `eksctl`:
 
 ```
 kubectl config get-contexts
@@ -245,7 +245,7 @@ CURRENT   NAME                                                           CLUSTER
 
 ### 4. Verify
 
-You can now verify the deployment. In this section we review the following cluster resources:
+We can now verify the deployment. In this section we review the following cluster resources:
 
 * Kubernetes Services
 * Worker Nodes
@@ -259,7 +259,7 @@ You can now verify the deployment. In this section we review the following clust
 
 #### Get Services
 
-The `kubectl get svc` lists all the services that are currently defined within the active context of your .kube/config file.
+The `kubectl get svc` command lists all the services that are currently defined within the active context of your `.kube/config` file.
 
 ```
 kubectl get svc
@@ -342,7 +342,7 @@ Output
 }
 ```
 
-The output from the 2 commands above indicate that the worker nodes are Amazon Linux 2 EC2 instances, each with the following resources available to allocate to Pods:
+The output from the 2 commands above indicates that the worker nodes are Amazon Linux 2 EC2 instances, each with the following resources available to allocate to Pods:
 
 - CPUs: 2
 - Memory: 6.8 GB
@@ -368,7 +368,7 @@ VPC > Virtual private cloud > Your VPCs > `select vpc` > Resource Map (tab):
 
 ![aws-vpc-subnets.png](img%2Faws-vpc-subnets.png)
 
-Within the VPC, subnets are created across multiple Availability Zones (AZs). Worker nodes are deployed into these subnets. 
+Within the VPC, subnets are created across multiple Availability Zones (AZs). Worker nodes are deployed into the subnets. 
 
 ##### Security Groups
 
