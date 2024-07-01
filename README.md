@@ -1,6 +1,12 @@
 
 ## AWS EKS Cluster Deployment
 
+### Abstract
+
+This guide provides a step-by-step procedure to create a Kubernetes cluster in EKS (Elastic Kubernetes Service) using `eksctl`, followed by a brief verification of the AWS infrastructure established by an automated cluster deployment process. Finally, the guide suggests a cleanup step to delete cloud resources from your AWS account.
+
+### Overview
+
 The most recent version of the open-source command-line tool written in Go by the team at Weaveworks, `eksctl`, dwarfs the creation of a full-fledged EKS cluster into a one-line wonder: 
 
 ```
@@ -13,7 +19,7 @@ The process takes about 15 minutes. The end result is cloud infrastructure in AW
 
 ## Getting Started
 
-This guide provides a step-by-step procedure to create a Kubernetes cluster in EKS (Elastic Kubernetes Service) using `eksctl`, and a brief verification of the AWS infrastructure established by this automated cluster deployment process. Finally, the guide suggests a cleanup step to delete cloud resources from your AWS account.
+The following steps are recommended to get started:
 
 ### Steps
 
