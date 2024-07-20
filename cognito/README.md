@@ -198,7 +198,7 @@ In this flow, there are 4 main components: the user's web browser on a mobile de
 
 1 - A user through a web browser initiates the process by proceeding to login, or by selecting an IdP. In this step the application sends a request to the authorization endpoint of the OpenID provider exposed by the Cognito user pool.
 
-2 - For sign-in as a user in the user pool, the response from the authorization endpoint redirects to the Self Hosted UI (aka Cognito login page). The redirect goes to the Self Hosted UI, where the user enters their username/password and clicks the Sign-In button to POST their credentials to the OpenID provider's login endpoint. 
+2 - For sign-in as a user in the user pool, the response from the authorization endpoint redirects to the Self Hosted UI (aka Cognito user pool application client login page). The redirect goes to the Self Hosted UI, where the user enters their username/password and clicks the Sign-In button to POST their credentials to the OpenID provider's login endpoint. 
 
 OR,
 
