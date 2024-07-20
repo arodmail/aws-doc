@@ -6,7 +6,7 @@ This guide walks through a step-by-step process to create a basic Amazon Cognito
 
 ### 1. Intro
 
-Amazon Cognito User Pools is a fully managed user directory for web and mobile applications. It offers features for user sign-up, sign-in, and user profile management. As a managed service, Cognito is backed by AWS cloud-based security and availability features, including MFA, Adaptive Authentication, Compromised Credentials checks, and 99.9% uptime. Cognito provides a customizable, hosted sign-up and sign-in UI, along with social sign-in integration with Facebook, Google, Amazon, and Apple.
+Amazon Cognito User Pools is a fully managed user directory for web and mobile applications. It offers features for user sign-up, sign-in, and user profile management. As a managed service, Cognito is backed by AWS cloud-based security and availability features, including MFA, adaptive authentication, compromised credentials checks, and 99.9% uptime. Cognito provides a customizable, hosted sign-up and sign-in UI, along with social sign-in integration with Facebook, Google, Amazon, and Apple.
 
 #### CIAM 
 
@@ -20,7 +20,7 @@ From a high level, 3 components are involved in an authorization request with a 
 
 - Application - a customer-facing mobile or web application
 - User Pool - can be thought of as an authorization server
-- External IdP - an alternative, optional identity provider, for federated identities. 
+- External IdP - a federated identity provider
 
 ![aws-congito-sequence-overview.png](img%2Faws-congito-sequence-overview.png)
 
@@ -32,8 +32,8 @@ To obtain a JSON Web Token from a Cognito user pool that can be used to authoriz
 1 - Request Authorization
 
 - The application sends an authorization request to the user pool's `/oauth2/authorize` endpoint. 
-- The user pool responds with a redirect its `/login` endpoint, causing the application to launch the hosted UI and prompt the user for their credentials. 
-- The user submits their credentials through the hosted UI, and the user pool validates them against a local directory, or against an external IdP. 
+- The user pool responds with a redirect its `/login` endpoint, to launch the hosted UI and prompt the user for their credentials. 
+- The user submits their credentials through the hosted UI, sent to the user pool for validation  against a local directory, or against an external IdP. 
 
 2 - Authorize
 
@@ -69,7 +69,7 @@ This step allows you to customize password rules, enable MFA, and to define  acc
 
 #### Step 3 - Configure Sign-Up experience
 
-This step enables self-registration if you want anyone on the internet to sign-up for your application's services. Here you can define how attribute verification should work, for example to send a verification code to a user's email address to verify their email. User's can only sign in with verified attributes. Select _Enable self-registration_, and _Cognito-assisted verification_. Leave other values as defaults. 
+This step enables self-registration if you want anyone on the internet to sign-up for your application's services. Here you can define how attribute verification should work, for example to send a verification code to a user's email address to verify their email and to ensure user's can only sign in with verified attributes. Select _Enable self-registration_, and _Cognito-assisted verification_. Leave other values as defaults. 
 
 ![aws-cognito-step-3.png](img%2Faws-cognito-step-3.png)
 
@@ -121,13 +121,13 @@ With your new user pool created, let's verify the basic settings.
 
 ### 4. Verification
 
-View the user pool and go to the _App integration_ tab. Scroll to the bottom and select the `cognito-confidential-client` under _App clients and analytics_. Here you can see the _Client ID_ and _Client secret_ values that are used in the Postman demo later. 
+View the user pool and go to the _App integration_ tab. Scroll to the bottom and select the `cognito-confidential-client` under _App clients and analytics_. There you can see the _Client ID_ and _Client secret_ values that are used in the Postman demo later. 
 
 ![aws-cognito-verify-1.png](img%2Faws-cognito-verify-1.png)
 
 #### Step 4.1 Verify Hosted UI
 
-Scroll down to the _Hosted UI_ section and click _View Hosted UI_. This launches the login screen your users will be presented with to enter their credentials, to sign-up for your application, and/or to recover their account password through a "Forgot your password" link. 
+Scroll down to the _Hosted UI_ section and click _View Hosted UI_. This launches the login page your users will be presented with to enter their credentials, to sign-up for your application, and/or to recover their account password through a "Forgot your password" link. 
 
 ![aws-cognito-verify-hosted-ui.png](img%2Faws-cognito-verify-hosted-ui.png)
 
@@ -188,7 +188,7 @@ In the meta-data, the following endpoints are used later to setup Postman to int
 
 ### 5. Sequence Diagram (Flow)
 
-Before moving on, let's explore in detail the step-by-step sign-in flow, the components involved, and their interactions. 
+Before moving on with tests, let's explore in detail the step-by-step sign-in flow, the components involved, and their interactions. 
 
 ![aws-cognito-sequence-diagram.png](img%2Faws-cognito-sequence-diagram.png)
 
@@ -196,17 +196,17 @@ In this flow, there are 4 main components: the user's web browser on a mobile de
 
 ##### Steps
 
-1 - A user through a web browser initiates the process by proceeding to login, or by selecting an IdP from a login screen. The application sends a request to the authorization endpoint of the OpenID provider exposed by the Cognito user pool.
+1 - A user through a web browser initiates the process by proceeding to login, or by selecting an IdP. In this step the application sends a request to the authorization endpoint of the OpenID provider exposed by the Cognito user pool.
 
-2 - For sign-in as a user in the user pool, the response from the authorization endpoint is a redirect to the Self Hosted UI. The redirect is followed by the browser, and the Self Hosted UI is returned and displayed, where the user enters their username/password and clicks the Sign-In button to POST their credentials to the OpenID provider's login endpoint. 
+2 - For sign-in as a user in the user pool, the response from the authorization endpoint redirects to the Self Hosted UI (aka Cognito login page). The redirect goes to the Self Hosted UI, where the user enters their username/password and clicks the Sign-In button to POST their credentials to the OpenID provider's login endpoint. 
 
 OR,
 
-3 - For social sign-in, federated identity, or SAML authentication, the user is redirected to the IdP login screen, where they enter their username/password and POST their credentials to the IdP sign-in endpoint. If the credentials are recognized by the IdP, then an authorization code or a SAML assertion is returned.  
+3 - For social sign-in, federated identity, or SAML authentication, a redirect to the IdP login page prompts for a username/password. The page sends the user's credentials to the IdP's sign-in endpoint. If the credentials are recognized by the IdP, then an authorization code or a SAML assertion is returned.  
 
-4 - In this step, the authentication process is complete. For Single Sign-On, a session cookie is set at this point, valid for 1 hour. Next, given a PKCE Authorization Code, the application's callback URL exchanges the code for a set of JWTs by sending a POST request to the OpenID provider's token endpoint. The access token returned represents a user's session with an expiration, valid for 60 seconds or less and can be used to authorize access to the application's backend services. This token can be refreshed to extend the session, using a refresh token. 
+4 - In this step, the authentication process is complete. For Single Sign-On flows, an SSO session cookie gets set that lasts for 1 hour. Next, given an Authorization Code, the application's callback URL exchanges the code for a set of JWTs by sending a POST request to the OpenID provider's token endpoint. The access token returned should expire after 60 seconds or less, but while valid, authorizes access to the application's backend services. A refresh token may extend the access token expiration. 
 
-5 - Finally, the user is authenticated and authorized into the application's content, which is sent to the user's browser. If the same user attempts to access another application in the same Cognito user pool (or same domain), then the SSO session cookie, while still valid, allows the user to skip having to sign-in again. 
+5 - Last, the user is authenticated and authorized into the application. If the same user attempts to access another application in the same Cognito user pool (or same domain), then the SSO session cookie, while still valid, allows the user to skip the sign-in flow. 
 
 ### 6. Demo/Test - Postman
 
@@ -222,7 +222,7 @@ First, create a new request, but leave the URL blank. Go directly to the Authori
 
 #### 6.3 Launch Self-Hosted UI
 
-Click "Get New Access Token". The Self-Hosted UI should appear in a new window. We don't have any users in our user pool yet, so let's create a new user by going through the user registration flow. Select _Sign up_.
+Click "Get New Access Token". The Self-Hosted UI should pop up in a new window. We don't have any users in our user pool yet, so let's create a new user by going through the user registration flow. Select _Sign up_.
 
 ![aws-cognito-postman-auth-2.png](img%2Faws-cognito-postman-auth-2.png)
 
@@ -234,31 +234,31 @@ Provide a Username, a valid email address you have access to, and a password tha
 
 #### 6.5 Confirm Account
 
-In this step, you are prompted for a Verification code which was sent to the email address provided in the previous step. Get the code from the email message, enter it here and click Confirm account. This code is valid for a set time period. If the time period passes, then you can  request a new code. 
+This step requires the Verification code sent to the email address provided in the previous step. Get the code from the email message, enter it here and click Confirm account. This code expires. If the code is expired, then request a new code. 
 
 ![aws-cognito-postman-auth-4.png](img%2Faws-cognito-postman-auth-4.png)
 
 #### 6.6 Authentication Complete
 
-You should see a dialog confirming a new access token was received. Click _Proceed_. 
+You should get an authentication complete message. Click _Proceed_. 
 
 ![aws-cognito-postman-auth-5.png](img%2Faws-cognito-postman-auth-5.png)
 
 #### 6.7 Authentication Complete - Tokens
 
-The tokens associated with the authorization request are displayed by Postman in a new window. Here you will find an ID Token, Access Token, Refresh Token, and the expiration time. 
+Postman displays the tokens associated with the authorization request in a new window. Here you will find an ID Token, Access Token, Refresh Token, and the expiration time. 
 
 ![aws-cognito-postman-auth-6.png](img%2Faws-cognito-postman-auth-6.png)
 
 #### 6.8 User Sign-Up and Authentication Sequence
 
-Open the Console in Postman to review the sequence of HTTPS requests that comprise the new user sign-up flow including a token request. 
+Open the Console in Postman to review the sequence of HTTPS requests that comprise the new user sign-up flow, including a token request. 
 
 ![aws-cognito-postman-auth-8.png](img%2Faws-cognito-postman-auth-8.png)
 
 #### 6.9 User Added to Pool
 
-To view the new user in the user pool, go back to the AWS Console > Amazon Cognito > view your pool, and the new user should be listed under the _User_ tab. Note that the user's _Confirmation status_ is "Confirmed" because of the email verification step during sign-up. 
+To view the new user in the user pool, go back to the AWS Console > Amazon Cognito > view your pool. The new user appears under the _User_ tab. Note that the user's _Confirmation status_ is "Confirmed" by the email verification step during sign-up, Step 6.5 above. 
 
 ![aws-cognito-postman-auth-7.png](img%2Faws-cognito-postman-auth-7.png)
 
@@ -280,35 +280,34 @@ Open the Postman Console to see the sequence of HTTPS requests that comprise the
 
 ![aws-cognito-postman-auth-10.png](img%2Faws-cognito-postman-auth-10.png)
 
-For a diagrammatic representation of this flow see "Sequence Diagram (Flow) above". 
+For a diagrammatic representation of this flow see [Sequence Diagram (Flow)](#5-sequence-diagram-flow) above. 
 
 #### 7.2 Step 1 - Authorization Endpoint (GET)
 
-The first step sends a GET request to the OpenID provider's `/oauth2/authorize` endpoint. Note the `location` Response header redirects the application to the `/login` endpoint which displays the Self Hosted UI. Also note that the Response Code is 302. 
+The first step sends a GET request to the OpenID provider's `/oauth2/authorize` endpoint. Note the `location` response header redirects to the `/login` endpoint to go directly to the Self Hosted UI. Also note the Response Code: 302. 
 
 ![aws-cognito-postman-auth-11.png](img%2Faws-cognito-postman-auth-11.png)
 
 The application initiates the flow by sending the following URL parameters:
 
-| Parameter               | Description                                                                                                                                           |
-|-------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `response_type=code`    | Indicates that the client is requesting an authorization code.                                                                                        |
-| `client_id`             | The client identifier issued by the OpenID Provider.                                                                                                  |
-| `redirect_uri`          | The URI to which the authorization server will send the user after granting or denying access. This is the Callback URL we defined in Step 5.3 above. |
-| `scope`                 | Optional. Specifies the scope of the access request, which includes `openid` to indicate OpenID Connect authentication.                               |
-| `code_challenge`        | A URL-safe base64-encoded SHA256 hash of a randomly generated `code_verifier`.                                                                        |
-| `code_challenge_method=S256` | Indicates that the SHA256 method is used to hash the `code_verifier`.                                                                                 |
-
+| Parameter                    | Description                                                                                                                                                                                                                                                                          |
+|------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `response_type=code`         | Indicates that the client is requesting an OAuth 2.0 authorization code.                                                                                                                                                                                                             |
+| `client_id`                  | The client identifier issued by the OpenID Provider.                                                                                                                                                                                                                                 |
+| `redirect_uri`               | The URI to which the authorization server will send the user after granting or denying access. This is the Callback URL we defined in Step 5.3 above.                                                                                                                                |
+| `scope`                      | Optional. Specifies the scope of the access request, which includes `openid` to indicate OpenID Connect authentication.                                                                                                                                                              |
+| `code_challenge`             | A URL-safe base64-encoded SHA256 hash of a randomly generated `code_verifier`. Used to prevent [authorization code interception](https://blog.postman.com/what-is-pkce/) attacks, where an attacker intercepts the authorization code and tries to use it to obtain an access token. |
+| `code_challenge_method=S256` | Indicates that the SHA256 method is used to hash the `code_verifier`.                                                                                                                                                                                                                |
 
 #### 7.3 Step 2 - Redirect to Self-Hosted UI (GET)
 
-This step simply follows the redirect from the previous response, to launch the Self Hosted UI and prompt for Username / Password values. 
+This step simply follows the redirect from the previous response, to go to the Self Hosted UI and prompt for username/password. 
 
 ![aws-cognito-postman-auth-12.png](img%2Faws-cognito-postman-auth-12.png)
 
 #### 7.4 Step 3 - Submit User Credentials (POST)
 
-When the user clicks the _Sign In_ button in the Self Hosted UI, a POST request is sent to the OpenID provider's `/login` endpoint to submit the credentials entered through the Self Hosted UI. The Response Code from this request, if the credentials are valid, is 302 with a redirect to the application's Callback URL, including the PKCE Authorization Code.
+When the user clicks the _Sign In_ button in the Self Hosted UI, it sends a POST request to the OpenID provider's `/login` endpoint to validate the user's credentials. The response code from this request, if the credentials are valid, is 302 with a redirect to the application's Callback URL, which includes the OAuth 2.0 authorization code.
 
 ![aws-cognito-postman-auth-13.png](img%2Faws-cognito-postman-auth-13.png)
 
@@ -320,7 +319,7 @@ location: https://localhost?code=d89066dd-cff4-423f-811a-1164d6161b4b
 
 #### 7.5 Step 4 - Token Endpoint (POST)
 
-In this final step, the last in the sign-in flow, the Authorization Code is exchanged for a JWT. A POST request is sent to the OpenID provider's `/oauth2/token` endpoint that includes the auth code and the URL to redirect to within the application. 
+In this final step, the last in the sign-in flow, the authorization code is exchanged for a JWT. A POST request is sent to the OpenID provider's `/oauth2/token` endpoint that includes the auth code and the URL to redirect to within the application. 
 
 ![aws-cognito-postman-auth-14.png](img%2Faws-cognito-postman-auth-14.png)
 
@@ -332,6 +331,8 @@ code: "d89066dd-cff4-423f-811a-1164d6161b4b"
 redirect_uri: "https://localhost"
 code_verifier: "7NUjQzeZ7_hmI9zGurufbT0XyjGoQWXe9p_6iQDTLnI"
 ```
+
+**Important Note**: Here the client sends the PKCE `code_verifier` value, the same value used in Step 7.1 to generate the `code_challenge`, a one-way hash value. The authorization server hashes the `code_verifier` value to match it with the initial `code_challenge`. An access token is returned to the client only if they match. This step proves that the same client who initiated the authorization flow is requesting the token, and not a malicious application that may have intercepted the authorization code. 
 
 Response Body
 
@@ -365,6 +366,14 @@ https://datatracker.ietf.org/doc/html/rfc6749
 The OAuth 2.0 Authorization Framework: Bearer Token Usage
 
 https://datatracker.ietf.org/doc/html/rfc6750
+
+Proof Key for Code Exchange by OAuth Public Clients
+
+https://www.rfc-editor.org/rfc/rfc7636
+
+OAuth 2.0 Threat Model and Security Considerations
+
+https://www.rfc-editor.org/rfc/rfc6819
 
 OpenID Authentication 2.0
 
