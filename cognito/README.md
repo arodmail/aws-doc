@@ -354,7 +354,7 @@ The application's Callback URL may be designed securely to accept these tokens t
 
 PKCE in Amazon Cognito User Pools mitigates the risk of authorization code interception attacks by ensuring that the code exchanged for tokens is verified with a unique proof key. This is particularly useful for public clients, such as mobile and single-page applications, that cannot securely store client secrets.
 
-Amazon Cognito User Pools is a robust  Customer Identity and Access Management (CIAM) solution for managing customer identities across digital platforms. By stepping through the creation and configuration of a basic user pool and trying out the OpenID provider's endpoints through Postman, this guide is intended to help you get started and to quickly apply the concepts to real-world CIAM scenarios. 
+Amazon Cognito User Pools is a robust  Customer Identity and Access Management (CIAM) solution for managing customer identities across digital platforms. By stepping through the creation and configuration of a basic user pool and trying out the OpenID provider's endpoints through Postman, this guide is intended to help you get started quickly and to apply the concepts in real-world CIAM scenarios. 
 
 ### 9. Links
 
