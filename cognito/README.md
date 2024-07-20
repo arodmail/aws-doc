@@ -348,7 +348,7 @@ The response body is a JSON document with the following tokens:
 }
 ```
 
-The application's Callback URL may be designed securely to accept these tokens to grant the authorized  user access to the application's backend services. JWT's may also include claims that tell the application how to make more granular authorization decisions about access. 
+The application's Callback URL may be designed securely to accept these tokens to grant the authorized  user access to the application's backend services. You can [customize JWT's](https://aws.amazon.com/blogs/security/how-to-customize-access-tokens-in-amazon-cognito-user-pools/) to include claims that tell the application how to make more granular authorization decisions about access. 
 
 
 ### 8. Conclusion
