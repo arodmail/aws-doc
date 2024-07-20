@@ -41,7 +41,7 @@ To obtain a JSON Web Token from a Cognito user pool that can be used to authoriz
 - The application's callback URL exchanges the Authorization Code for a token by sending the code to the user pool's `/oauth2/token` endpoint. 
 - The user pool's token endpoint responds with one or more JWT. 
 
-This is a generalized overview. For a more detailed flow, see _Sequence Diagram (Flow)_ below. 
+This is a generalized overview. For a more detailed flow, see [Sequence Diagram (Flow)](#5-sequence-diagram-flow) below. 
 
 
 ### 3. Create User Pool Process
